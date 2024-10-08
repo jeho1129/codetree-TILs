@@ -1,7 +1,7 @@
 from collections import deque
 
 def moving_r():
-    num_c, distance_c = N, N ** 2
+    num_c, distance_c = N, N ** 3
     # 루돌프와 각 산타 간 거리 재기
     for j in range(len(c)):
         if c[j][3] > 0:
