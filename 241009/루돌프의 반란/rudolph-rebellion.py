@@ -112,6 +112,8 @@ def moving_c():
             else:
                 c.append(x)
                 graph[x[0] - 1][x[1] - 1] = 1
+        else:
+            c.append(x)
 
 dy, dx = [-1, 0, 1, 0, -1, -1, 1, 1], [0, 1, 0, -1, -1, 1, -1, 1]
 
