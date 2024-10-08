@@ -125,6 +125,8 @@ for i in range(P):
     c.append([cy, cx, cn, 0])
 result = [0] * P  # 최종 점수
 for i in range(M):
+    if len(c) == 0:
+        break
     moving_r()
     c = deque(sorted(c, key=lambda x: x[2]))
     graph = [[0] * N for _ in range(N)]
