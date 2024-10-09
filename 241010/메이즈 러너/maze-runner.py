@@ -97,3 +97,5 @@ for _ in range(K):
     rotate(j, k, l)
     rotate2(j, k, l)
 print(result)
+exits = [x + 1 for x in exits]
+print(*exits)
