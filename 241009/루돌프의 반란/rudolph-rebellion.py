@@ -1,141 +1,139 @@
 from collections import deque
 
+
 def moving_r():
-    num_c, distance_c = N, N ** 3
-    # 루돌프와 각 산타 간 거리 재기
-    for j in range(len(c)):
-        if c[j][3] > 0:
-            c[j][3] -= 1
-        distance = (r[0] - c[j][0]) ** 2 + (r[1] - c[j][1]) ** 2
-        if distance < distance_c:
-            num_c = j
-            distance_c = distance
-        elif distance == distance_c:
-            if c[j][0] > c[num_c][0] or (c[j][0] == c[num_c][0] and c[j][1] > c[num_c][1]):
-                num_c = j
-                distance_c = distance
-    # 가까운 산타에게 돌진하기
-    if c[num_c][0] > r[0]:
+    min_num, min_dist = -1, -1
+    # 가장 가까운 산타가 누구인 지 판별
+    for i in range(P):
+        # 생존한 산타만 판별
+        if s[i][3] != -1:
+            dist = (r[0] - s[i][0]) ** 2 + (r[1] - s[i][1]) ** 2
+            if min_dist == -1 or dist < min_dist:
+                min_dist = dist
+                min_num = i
+            elif dist == min_dist:
+                if s[min_num][0] < s[i][0] or (s[min_num][0] == s[i][0] and s[min_num][1] < s[i][1]):
+                    min_num = i
+    # 가장 가까운 산타를 향해 1칸 돌진
+    direction = -1
+    if s[min_num][0] > r[0]:
         r[0] += 1
-        if c[num_c][1] > r[1]:
+        if s[min_num][1] > r[1]:
             r[1] += 1
             direction = 7
-        elif c[num_c][1] < r[1]:
+        elif s[min_num][1] < r[1]:
             r[1] -= 1
             direction = 6
         else:
             direction = 2
-    elif c[num_c][0] == r[0]:
-        if c[num_c][1] > r[1]:
+    elif s[min_num][0] == r[0]:
+        if s[min_num][1] > r[1]:
             r[1] += 1
             direction = 1
-        else:
+        elif s[min_num][1] < r[1]:
             r[1] -= 1
             direction = 3
     else:
         r[0] -= 1
-        if c[num_c][1] > r[1]:
+        if s[min_num][1] > r[1]:
             r[1] += 1
             direction = 5
-        elif c[num_c][1] < r[1]:
+        elif s[min_num][1] < r[1]:
             r[1] -= 1
             direction = 4
         else:
             direction = 0
-    # 산타와 루돌프가 충돌할 경우
-    for j in range(len(c)):
-        x = c.popleft()
-        if x[0] == r[0] and x[1] == r[1]:
-            result[x[2] - 1] += C
-            x[3] = 2
-            x[0] += dy[direction] * C
-            x[1] += dx[direction] * C
-            if 0 < x[0] <= N and 0 < x[1] <= N:
-                check_c(x[0], x[1], direction, len(c))
-                c.append(x)
-            else:
-                break
+    # 산타와 충돌할 경우
+    if (direction < 4 and min_dist == 1) or (4 <= direction < 8 and min_dist == 2):
+        # C칸 만큼의 거리가 밀리고 점수를 획득, 해당 산타는 2턴만큼 기절
+        s[min_num][0] += dy[direction] * C
+        s[min_num][1] += dx[direction] * C
+        result[s[min_num][2] - 1] += C
+        s[min_num][3] = 2
+        # 게임판 밖으로 밀리면 탈락
+        if s[min_num][0] < 1 or s[min_num][0] > N or s[min_num][1] < 1 or s[min_num][1] > N:
+            s[min_num][3] = -1
+        # 밀린 곳에 다른 산타가 있는 지 판별
         else:
-            c.append(x)
+            check_santa(s[min_num], direction)
 
 
-def check_c(y, x, direction, n):
-    if n == 1:
+def check_santa(santa, direction):
+    for i in range(P):
+        # 밀린 곳에 다른 산타가 있을 경우, 해당 산타는 1칸만큼 밀림
+        if s[i][0] == santa[0] and s[i][1] == santa[1] and s[i][2] != santa[2] and s[i][3] != -1:
+            s[i][0] += dy[direction]
+            s[i][1] += dx[direction]
+            # 밖으로 밀리면 탈락
+            if s[i][0] < 1 or s[i][0] > N or s[i][1] < 1 or s[i][1] > N:
+                s[i][3] = -1
+            # 안 밀리면 다시 확인
+            else:
+                check_santa(s[i], direction)
+    else:
         return
-    for _ in range(n):
-        t = c.popleft()
-        if t[0] == y and t[1] == x:
-            t[0] += dy[direction]
-            t[1] += dx[direction]
-            if 0 < t[0] <= N and 0 < t[1] <= N:
-                c.append(t)
-                check_c(t[0], t[1], direction, n - 1)
-            else:
-                return
-        else:
-            c.append(t)
 
 
-def moving_c():
-    global graph
-    for i in range(len(c)):
-        x = c.popleft()
-        if x[3] > 0:
-            c.append(x)
-            continue
-        # 가장 가까운 거리를 계산
-        min_dis = (r[0] - x[0]) ** 2 + (r[1] - x[1]) ** 2
-        min_dir = 4
-        for j in range(4):
-            if 0 <= x[0] + dy[j] - 1 < N and 0 <= x[1] + dx[j] - 1 < N:
-                if graph[x[0] + dy[j] - 1][x[1] + dx[j] - 1] == 0:
-                    dis = (r[0] - (x[0] + dy[j])) ** 2 + (r[1] - (x[1] + dx[j])) ** 2
-                    if dis < min_dis:
-                        min_dis = dis
-                        min_dir = j
-        if min_dir < 4:
-            graph[x[0] - 1][x[1] - 1] = 0
-            x[0] += dy[min_dir]
-            x[1] += dx[min_dir]
-            if x[0] == r[0] and x[1] == r[1]:
-                result[x[2] - 1] += D
-                x[3] = 2
-                x[0] += -dy[min_dir] * D
-                x[1] += -dx[min_dir] * D
-                if 0 < x[0] <= N and 0 < x[1] <= N:
-                    check_c(x[0], x[1], (min_dir + 2) % 4, len(c))
-                    c.append(x)
-                    graph = [[0] * N for _ in range(N)]
-                    for k in range(len(c)):
-                        p = c[k]
-                        graph[p[0] - 1][p[1] - 1] = 1
-            else:
-                c.append(x)
-                graph[x[0] - 1][x[1] - 1] = 1
-        else:
-            c.append(x)
+def moving_s():
+    for i in range(P):
+        # 각 산타의 상태 판별
+        if s[i][3] == 0:
+            min_direction, min_dist = -1, (s[i][0] - r[0]) ** 2 + (s[i][1] - r[1]) ** 2
+            for j in range(4):
+                new_y, new_x = s[i][0] + dy[j], s[i][1] + dx[j]
+                if 1 <= new_y <= N and 1 <= new_x <= N:
+                    # 해당 자리에 산타가 없을 경우만 이동 가능
+                    for k in range(P):
+                        if s[k][2] != s[i][2] and s[k][0] == new_y and s[k][1] == new_x:
+                            break
+                    else:
+                        dist = (new_y - r[0]) ** 2 + (new_x - r[1]) ** 2
+                        if min_dist > dist:
+                            min_dist = dist
+                            min_direction = j
+            # 움직일 수 있는 경우
+            if min_direction != -1:
+                s[i][0] += dy[min_direction]
+                s[i][1] += dx[min_direction]
+                # 루돌프와 부딪힐 경우
+                if s[i][0] == r[0] and s[i][1] == r[1]:
+                    # D칸 만큼의 반대 방향으로 거리가 밀리고 점수를 획득, 해당 산타는 2턴만큼 기절
+                    s[i][0] += dy[(min_direction + 2) % 4] * D
+                    s[i][1] += dx[(min_direction + 2) % 4] * D
+                    result[s[i][2] - 1] += D
+                    s[i][3] = 2
+                    # 게임판 밖으로 밀리면 탈락
+                    if s[i][0] < 1 or s[i][0] > N or s[i][1] < 1 or s[i][1] > N:
+                        s[i][3] = -1
+                    # 밀린 곳에 다른 산타가 있는 지 판별
+                    else:
+                        check_santa(s[i], (min_direction + 2) % 4)
+
 
 dy, dx = [-1, 0, 1, 0, -1, -1, 1, 1], [0, 1, 0, -1, -1, 1, -1, 1]
-
 N, M, P, C, D = map(int, input().split())
 r = list(map(int, input().split()))
-c = deque()
-for i in range(P):
-    cn, cy, cx = map(int, input().split())
-    c.append([cy, cx, cn, 0])
-result = [0] * P  # 최종 점수
-for i in range(M):
-    if len(c) == 0:
+s = deque()
+result = [0] * P
+for _ in range(P):
+    sn, sr, sc = map(int, input().split())
+    s.append([sr, sc, sn, 0])
+for _ in range(M):
+    # 모든 산타 기절 스택 1 감소, 모두 탈락 시 즉시 게임 종료
+    out_santa = 0
+    for i in range(P):
+        if s[i][3] > 0:
+            s[i][3] -= 1
+        elif s[i][3] == -1:
+            out_santa += 1
+    if out_santa == P:
         break
+    s = deque(sorted(s, key=lambda x: x[2]))
     moving_r()
-    c = deque(sorted(c, key=lambda x: x[2]))
-    graph = [[0] * N for _ in range(N)]
-    for j in range(len(c)):
-        x = c[j]
-        graph[x[0] - 1][x[1] - 1] = 1
-    moving_c()
-    c = deque(sorted(c, key=lambda x: x[2]))
-    for j in range(len(c)):
-        x = c[j]
-        result[x[2] - 1] += 1
+    s = deque(sorted(s, key=lambda x: x[2]))
+    moving_s()
+    # 턴이 끝날 때, 생존한 산타는 1점씩 추가
+    for i in range(P):
+        if s[i][3] >= 0:
+            result[s[i][2] - 1] += 1
 print(*result)
