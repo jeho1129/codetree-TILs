@@ -98,4 +98,4 @@ points = [0] * M
 for _ in range(K):
     for j in range(M):
         game(j)
-print(points)
+print(*points)
