@@ -77,13 +77,12 @@ while True:
     # M분보다 시간이 적을 때는 사람을 베이스캠프에 배정해야 함.
     if t <= M:
         basecamp(t)
-
     # 모든 사람이 도착하면 탈출
     count = 0
     for i in range(M):
         if person[i][2] == 1:
             count += 1
-    if count == M or t == 20:
+    if count == M:
         break
     else:
         t += 1
