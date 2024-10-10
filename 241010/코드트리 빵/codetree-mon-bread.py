@@ -38,7 +38,7 @@ def move(n, y, x):
                 person[n] = [new_y, new_x, 1]
                 graph[new_y][new_x] = n + 1
                 break
-            if graph[new_y][new_x] <= 0:
+            if graph[new_y][new_x] <= 0 or graph[new_y][new_x] == n + 1:
                 queue = deque([[new_y, new_x]])
                 visited = [[0] * N for _ in range(N)]
                 visited[new_y][new_x] = 1
@@ -49,7 +49,7 @@ def move(n, y, x):
                     for k in range(4):
                         y2, x2 = y1 + dy[k], x1 + dx[k]
                         if 0 <= y2 < N and 0 <= x2 < N:
-                            if visited[y2][x2] == 0 and graph[y2][x2] <= 0:
+                            if visited[y2][x2] == 0 and (graph[y2][x2] <= 0 or graph[y2][x2] == n + 1):
                                 visited[y2][x2] = visited[y1][x1] + 1
                                 queue.append([y2, x2])
                 if visited[store[n][0] - 1][store[n][1] - 1] < count:
@@ -77,6 +77,7 @@ while True:
     # M분보다 시간이 적을 때는 사람을 베이스캠프에 배정해야 함.
     if t <= M:
         basecamp(t)
+
     # 모든 사람이 도착하면 탈출
     count = 0
     for i in range(M):
