@@ -3,6 +3,7 @@ dy, dx = [-1, 0, 0, 1], [0, -1, 1, 0]
 
 
 def basecamp(time):
+    global result2
     wanted_store = store[time - 1]
     a, b, c = N ** 3, 0, 0
     for i in range(N):
@@ -25,11 +26,13 @@ def basecamp(time):
                     a, b, c = visited[wanted_store[0] - 1][wanted_store[1] - 1], i, j
     base_info[b][c] = 0
     graph[b][c] = time
+    result2.append([wanted_store[0] - 1, wanted_store[1] - 1, -time])
     graph[wanted_store[0] - 1][wanted_store[1] - 1] = -time
     person[time - 1] = [b, c, 0]
 
 
 def move(n, y, x):
+    global result1
     # 편의점 위치
     y1, x1 = store[n][0] - 1, store[n][1] - 1
     queue = deque([[y1, x1]])
@@ -54,7 +57,7 @@ def move(n, y, x):
                 count = visited[new_y][new_x]
                 dir_y, dir_x = new_y, new_x
             if graph[new_y][new_x] == -(n + 1):
-                graph[new_y][new_x] = n + 1
+                result1.append([new_y, new_x, n + 1])
                 person[n] = [new_y, new_x, 1]
                 break
     else:
@@ -72,13 +75,19 @@ result = [False] * M
 t = 1
 while True:
     # 격자에 있는 사람이 편의점 방향을 향해서 1칸 움직이기
+    result1 = []
     for i in range(M):
         if person[i][0] != -1 and person[i][2] != 1:
             move(i, person[i][0], person[i][1])
+    for i in range(len(result1)):
+        graph[result1[i][0]][result1[i][1]] = result1[i][2]
 
     # M분보다 시간이 적을 때는 사람을 베이스캠프에 배정해야 함.
+    result2 = []
     if t <= M:
         basecamp(t)
+    for i in range(len(result2)):
+        graph[result2[i][0]][result2[i][1]] = result2[i][2]
 
     # 모든 사람이 도착하면 탈출
     count = 0
