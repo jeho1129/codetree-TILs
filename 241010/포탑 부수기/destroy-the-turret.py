@@ -1,3 +1,7 @@
+from collections import deque
+dy, dx = [0, 1, 0, -1, -1, -1, 1, 1], [1, 0, -1, 0, -1, 1, 1, -1]
+
+
 def select():
     # 공격자의 공격력, 열, 행 저장
     a1, y1, x1 = 5001, 0, 0
