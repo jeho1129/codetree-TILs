@@ -1,7 +1,3 @@
-from collections import deque
-dy, dx = [0, 1, 0, -1, -1, -1, 1, 1], [1, 0, -1, 0, -1, 1, 1, -1]
-
-
 def select():
     # 공격자의 공격력, 열, 행 저장
     a1, y1, x1 = 5001, 0, 0
@@ -16,7 +12,7 @@ def select():
                     if attack[i][j] > attack[y1][x1]:
                         a1, y1, x1 = graph[i][j], i, j
                     elif attack[i][j] == attack[y1][x1]:
-                        if i + j > y1 + x1 or (i + j == y1 + x1 and i > y1):
+                        if i + j > y1 + x1 or (i + j == y1 + x1 and j > x1):
                             a1, y1, x1 = graph[i][j], i, j
             if graph[i][j] > a2:
                 a2, y2, x2 = graph[i][j], i, j
@@ -24,7 +20,7 @@ def select():
                 if attack[i][j] < attack[y2][x2]:
                     a2, y2, x2 = graph[i][j], i, j
                 elif attack[i][j] == attack[y2][x2]:
-                    if i + j < y2 + x2 or (i + j == y2 + x2 and i < y2):
+                    if i + j < y2 + x2 or (i + j == y2 + x2 and j < x2):
                         a2, y2, x2 = graph[i][j], i, j
 
     return y1, x1, y2, x2
@@ -36,17 +32,17 @@ def attack1(a, b, c, d):
     visited[a][b] = True
     path = [[None] * M for _ in range(N)]
     while queue:
-        y, x = queue.popleft()
-        if y == c and x == d:
+        y1, x1 = queue.popleft()
+        if y1 == c and x1 == d:
             real_path = []
             while True:
-                if path[y][x] == (a, b):
+                if path[y1][x1] == (a, b):
                     break
-                real_path.append(path[y][x])
-                y, x = path[y][x]
+                real_path.append(path[y1][x1])
+                y1, x1 = path[y1][x1]
             return real_path
         for i in range(4):
-            new_y, new_x = y + dy[i], x + dx[i]
+            new_y, new_x = y1 + dy[i], x1 + dx[i]
             if new_y < 0:
                 new_y = N - 1
             elif new_y >= N:
@@ -57,7 +53,7 @@ def attack1(a, b, c, d):
                 new_x = new_x - M
             if not visited[new_y][new_x] and graph[new_y][new_x] != 0:
                 visited[new_y][new_x] = True
-                path[new_y][new_x] = (y, x)
+                path[new_y][new_x] = (y1, x1)
                 queue.append([new_y, new_x])
     return None
 
@@ -122,6 +118,7 @@ for t in range(K):
         for j in range(M):
             if graph[i][j] != 0 and (i, j) not in result:
                 graph[i][j] += 1
+
 score = 0
 for i in range(N):
     for j in range(M):
