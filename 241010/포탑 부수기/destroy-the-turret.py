@@ -24,7 +24,7 @@ def select():
                 if attack[i][j] < attack[y2][x2]:
                     a2, y2, x2 = graph[i][j], i, j
                 elif attack[i][j] == attack[y2][x2]:
-                    if i + j < y2 + x2 or (i + j == y2 + x1 and i < y2):
+                    if i + j < y2 + x2 or (i + j == y2 + x2 and i < y2):
                         a2, y2, x2 = graph[i][j], i, j
 
     return y1, x1, y2, x2
@@ -103,7 +103,7 @@ for t in range(K):
     graph[attack_y][attack_x] += (N + M)
     attack[attack_y][attack_x] = t + 1
     # 레이저 공격 시도
-    if attack1(attack_y, attack_x, attacked_y, attacked_x):
+    if attack1(attack_y, attack_x, attacked_y, attacked_x) is not None:
         result = attack1(attack_y, attack_x, attacked_y, attacked_x)
         for i in range(len(result)):
             y, x = result[i]
