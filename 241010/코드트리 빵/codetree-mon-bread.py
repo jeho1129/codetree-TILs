@@ -24,7 +24,7 @@ def basecamp(time):
                             if visited[new_y][new_x] == 0 and graph[new_y][new_x] == 0:
                                 visited[new_y][new_x] = visited[y][x] + 1
                                 queue.append([new_y, new_x])
-                if visited[wanted_store[0] - 1][wanted_store[1] - 1] < a:
+                if 0 < visited[wanted_store[0] - 1][wanted_store[1] - 1] < a:
                     a, b, c = visited[wanted_store[0] - 1][wanted_store[1] - 1], i, j
     base_info[b][c] = 0
     graph[b][c] = time
@@ -85,7 +85,7 @@ while True:
     for i in range(M):
         if person[i][2] == 1:
             count += 1
-    if count == M:
+    if count == M or t == 10:
         break
     else:
         t += 1
