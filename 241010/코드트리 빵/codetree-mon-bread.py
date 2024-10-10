@@ -79,13 +79,15 @@ while True:
     for i in range(M):
         if person[i][0] != -1 and person[i][2] != 1:
             move(i, person[i][0], person[i][1])
-    for i in range(len(result1)):
-        graph[result1[i][0]][result1[i][1]] = result1[i][2]
 
     # M분보다 시간이 적을 때는 사람을 베이스캠프에 배정해야 함.
     result2 = []
     if t <= M:
         basecamp(t)
+
+    for i in range(len(result1)):
+        graph[result1[i][0]][result1[i][1]] = result1[i][2]
+        
     for i in range(len(result2)):
         graph[result2[i][0]][result2[i][1]] = result2[i][2]
 
