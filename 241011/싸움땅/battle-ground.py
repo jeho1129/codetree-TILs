@@ -18,6 +18,7 @@ def game(n):
         # 싸움에 돌입
         if player[i][0] == new_y and player[i][1] == new_x:
             fight(n, i, new_y, new_x)
+            break
     # 이동한 방향에 플레이어가 없을 경우
     else:
         x = player[n][4]
@@ -60,6 +61,7 @@ def fight(a, b, new_y, new_x):
         guns[new_y][new_x].sort()
 
     player[loser][4] = 0
+
     # 이긴 플레이어는 승리한 칸에서 떨어져 있는 총과 원래 들고 있는 총 중 가장 공격력이 높은 총을 획득하고, 나머지 총은 내려 놓는다
     x = player[winner][4]
     if guns[new_y][new_x]:
@@ -69,6 +71,7 @@ def fight(a, b, new_y, new_x):
             if x > 0:
                 guns[new_y][new_x].append(x)
                 guns[new_y][new_x].sort()
+
     # 진 플레이어는 해당 플레이어가 원래 가고 있던 방향으로 한 칸 더 이동
     y1, x1 = player[loser][0] + dy[player[loser][2]], player[loser][1] + dx[player[loser][2]]
     # 범위 밖인 경우, 다른 플레이어가 이미 위치해 있는 경우
@@ -105,6 +108,8 @@ for i in range(M):
     player[i][0], player[i][1] = player[i][0] - 1, player[i][1] - 1
 points = [0] * M
 for _ in range(K):
+
     for j in range(M):
         game(j)
+
 print(*points)
