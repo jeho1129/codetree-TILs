@@ -26,7 +26,6 @@ def basecamp(time):
                     a, b, c = visited[wanted_store[0] - 1][wanted_store[1] - 1], i, j
     base_info[b][c] = 0
     graph[b][c] = time
-    result2.append([wanted_store[0] - 1, wanted_store[1] - 1, -time])
     graph[wanted_store[0] - 1][wanted_store[1] - 1] = -time
     person[time - 1] = [b, c, 0]
 
@@ -84,11 +83,8 @@ while True:
         graph[result1[i][0]][result1[i][1]] = result1[i][2]
 
     # M분보다 시간이 적을 때는 사람을 베이스캠프에 배정해야 함.
-    result2 = []
     if t <= M:
         basecamp(t)
-    for i in range(len(result2)):
-        graph[result2[i][0]][result2[i][1]] = result2[i][2]
 
     # 모든 사람이 도착하면 탈출
     count = 0
