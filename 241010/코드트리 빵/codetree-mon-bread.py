@@ -57,7 +57,8 @@ def move(n, y, x):
                 count = visited[new_y][new_x]
                 dir_y, dir_x = new_y, new_x
             if graph[new_y][new_x] == -(n + 1):
-                result1.append([new_y, new_x, n + 1])
+                graph[new_y][new_x] = n + 1
+                # result1.append([new_y, new_x, n + 1])
                 person[n] = [new_y, new_x, 1]
                 break
     else:
@@ -79,15 +80,13 @@ while True:
     for i in range(M):
         if person[i][0] != -1 and person[i][2] != 1:
             move(i, person[i][0], person[i][1])
+    for i in range(len(result1)):
+        graph[result1[i][0]][result1[i][1]] = result1[i][2]
 
     # M분보다 시간이 적을 때는 사람을 베이스캠프에 배정해야 함.
     result2 = []
     if t <= M:
         basecamp(t)
-
-    for i in range(len(result1)):
-        graph[result1[i][0]][result1[i][1]] = result1[i][2]
-        
     for i in range(len(result2)):
         graph[result2[i][0]][result2[i][1]] = result2[i][2]
 
