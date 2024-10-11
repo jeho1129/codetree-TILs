@@ -8,7 +8,7 @@ def BFS(n, i, j):
     visited = [[False] * N for _ in range(N)]
     visited[i][j] = True
     while queue:
-        y, x = queue.popleft()
+        y, x = queue.pop()
         for k in range(4):
             new_y, new_x = y + dy[k], x + dx[k]
             if 0 <= new_y < N and 0 <= new_x < N:
@@ -23,18 +23,18 @@ def BFS_2(n, i, j):
     visited = [[False] * N for _ in range(N)]
     visited[i][j] = True
     while queue:
-        y, x = queue.popleft()
+        y, x = queue.pop()
         for k in range(4):
             new_y, new_x = y + dy[k], x + dx[k]
             if 0 <= new_y < N and 0 <= new_x < N:
                 if not visited[new_y][new_x] and graph_info[new_y][new_x] == n:
-                    if 2 <= graph[new_y][new_x]:
+                    if graph[new_y][new_x] == 2:
                         visited[new_y][new_x] = True
                         queue.append((new_y, new_x))
-                        if 2 <= graph[new_y][new_x] <= 3:
-                            team_info[n - 1].append((new_y, new_x))
-                            if graph[new_y][new_x] == 3:
-                                return
+                        team_info[n - 1].append((new_y, new_x))
+                    if graph[new_y][new_x] == 3 and graph[y][x] == 2:
+                        team_info[n - 1].append((new_y, new_x))
+                        return
 
 
 def move(n):
@@ -53,6 +53,23 @@ def move(n):
                     else:
                         graph[y2][x2] = 2
                 team_info[n].appendleft((new_y, new_x))
+                return
+
+    for i in range(4):
+        new_y, new_x = y + dy[i], x + dx[i]
+        check_y, check_x = team_info[n][-1]
+        if new_y == check_y and new_x == check_x:
+            y3, x3 = team_info[n].pop()
+            team_info[n].appendleft((y3, x3))
+            for j in range(len(team_info[n])):
+                y4, x4 = team_info[n][j]
+                if j == 0:
+                    graph[y4][x4] = 1
+                elif j == len(team_info[n]) - 1:
+                    graph[y4][x4] = 3
+                else:
+                    graph[y4][x4] = 2
+            return
 
 
 def ball1(n):
@@ -104,17 +121,20 @@ graph_info = [[0] * N for _ in range(N)]
 team_info = deque([deque([]) for _ in range(M)])
 result = 0
 n = 1
+
 for i in range(N):
     for j in range(N):
         if graph[i][j] != 0 and graph_info[i][j] == 0:
             graph_info[i][j] = n
             BFS(n, i, j)
             n += 1
+
 for i in range(N):
     for j in range(N):
         if graph[i][j] == 1:
             team_info[graph_info[i][j] - 1].append((i, j))
             BFS_2(graph_info[i][j], i, j)
+
 for i in range(1, K + 1):
     # 각 팀은 머리 사람을 따라서 한 칸 이동
     for j in range(M):
@@ -132,7 +152,6 @@ for i in range(1, K + 1):
         if i == 0:
             i = 4 * N
         number = ball4(i - (3 * N + 1))
-
     if number is not None:
         team_info[number].reverse()
         for i in range(len(team_info[number])):
