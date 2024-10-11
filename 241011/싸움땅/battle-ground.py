@@ -172,9 +172,6 @@ def simulate():
 # k번에 걸쳐 시뮬레이션을 진행합니다.
 for _ in range(k):
     simulate()
-    print(gun)
-    print(players)
-    print(points)
 
 # 각 플레이어가 획득한 포인트를 출력합니다.
 for point in points:
