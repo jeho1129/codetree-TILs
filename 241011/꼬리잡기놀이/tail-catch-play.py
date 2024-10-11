@@ -1,3 +1,6 @@
+import sys
+sys.stdin = open('input.txt', 'r')
+
 from collections import deque
 
 dy, dx = [0, -1, 0, 1], [1, 0, -1, 0]
@@ -133,13 +136,15 @@ for i in range(1, K + 1):
             i = 4 * N
         number = ball4(i - (3 * N + 1))
 
-    team_info[number].reverse()
-    for i in range(len(team_info[number])):
-        y, x = team_info[number][i]
-        if i == 0:
-            graph[y][x] = 1
-        elif i < len(team_info[number]) - 1:
-            graph[y][x] = 2
-        else:
-            graph[y][x] = 3
+    if number is not None:
+        team_info[number].reverse()
+        for i in range(len(team_info[number])):
+            y, x = team_info[number][i]
+            if i == 0:
+                graph[y][x] = 1
+            elif i < len(team_info[number]) - 1:
+                graph[y][x] = 2
+            else:
+                graph[y][x] = 3
+
 print(result)
