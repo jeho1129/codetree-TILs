@@ -89,7 +89,7 @@ def ball2(n):
     global result
     for i in range(N - 1, -1, -1):
         if 1 <= graph[i][n] <= 3:
-            team_number = graph[i][n] - 1
+            team_number = graph_info[i][n] - 1
             team_index = team_info[team_number].index((i, n)) + 1
             result += team_index ** 2
             return team_number
@@ -99,7 +99,7 @@ def ball3(n):
     global result
     for i in range(N - 1, -1, -1):
         if 1 <= graph[N - 1 - n][i] <= 3:
-            team_number = graph[N - 1 - n][i] - 1
+            team_number = graph_info[N - 1 - n][i] - 1
             team_index = team_info[team_number].index((N - 1 - n, i)) + 1
             result += team_index ** 2
             return team_number
@@ -108,9 +108,9 @@ def ball3(n):
 def ball4(n):
     global result
     for i in range(N):
-        if 1 <= graph[N - 1 - n][i] <= 3:
-            team_number = graph[N - 1 - n][i] - 1
-            team_index = team_info[team_number].index((N - 1 - n, i)) + 1
+        if 1 <= graph[i][N - 1 - n] <= 3:
+            team_number = graph_info[i][N - 1 - n] - 1
+            team_index = team_info[team_number].index((i, N - 1 - n)) + 1
             result += team_index ** 2
             return team_number
 
@@ -136,6 +136,7 @@ for i in range(N):
             BFS_2(graph_info[i][j], i, j)
 
 for i in range(1, K + 1):
+
     # 각 팀은 머리 사람을 따라서 한 칸 이동
     for j in range(M):
         move(j)
@@ -144,9 +145,9 @@ for i in range(1, K + 1):
     i = i % (4 * N)
     if 0 < i <= N:
         number = ball1(i - 1)
-    elif i <= 2 * N:
+    elif N < i <= 2 * N:
         number = ball2(i - (N + 1))
-    elif i <= 3 * N:
+    elif 2 * N < i <= 3 * N:
         number = ball3(i - (2 * N + 1))
     else:
         if i == 0:
